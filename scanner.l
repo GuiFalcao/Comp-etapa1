@@ -46,6 +46,10 @@ void initMe();
 
 [ \t]										{}
 "\n" 										{lineNumber++;}
+"//".*
+"/*" 										{BEGIN(COMMENT);}
+
+. 											{return TOKEN_ERROR;}
 
 %%
 
