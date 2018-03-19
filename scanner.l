@@ -3,7 +3,7 @@
  * Nomes:
  * Guillermo Falcão Amaya
  * Günter Matheus Hertz
-*/
+ */
 
 %{
 #include "tokens.h"

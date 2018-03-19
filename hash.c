@@ -4,6 +4,7 @@
  * Guillermo Falcão Amaya
  * Günter Matheus Hertz
  */
+ 
 #include "hash.c"
 
 HASH* hashInit(void);{
@@ -22,22 +23,48 @@ int hashAddress(char *text){
   return adress-1;
 }
 
-HASH* hashInsert(int type, char *text){
-  HASH *newnode=0;
+HASH_NODE* hashInsert(int type, char* text){
+    int address;
+    HASH_NODE* newNode = NULL;
 
-  newnode = (HASH*) calloc(1,sizeof(HASH));
-  newnode->text = calloc(strlen(text)+1, sizeof(char));
-  strcpy(newnode->text, text);
-  newnode->next = Table[address];
-  Table[adress] = newnode;
-  return newnode;
+    address = hashAddress(text);
+
+    newNode = hashFind(text);
+    if (newNode == NULL){
+        newNode = (HASH_NODE*) calloc(1, sizeof(HASH_NODE));
+        newNode->type = type;
+        newNode->text = (char*) calloc(strlen(text)+1, sizeof(char));
+        strcpy(newNode->text, text);
+
+        newNode->next = hashTable[address];
+        hashTable[address] = newNode;
+    }
+    return newNode;
 }
 
 
-HASH* hashFind(char* text){
-  
+HASH_NODE* hashFind(char* text){
+    int address;
+    address = hashAddress(text);
+
+    HASH_NODE* node;
+
+    for (node = hashTable[address]; node != NULL; node = node->next){
+        if (!strcmp(text, node->text))
+            return node;
+    }
+
+    return NULL;
 }
 
 void hashPrint(void){
+    int i = 0;
+    HASH_NODE* node;
 
+    for (i = 0; i < HASH_SIZE; ++i){
+        for (node = hashTable[i]; node != NULL; node = node->next){
+            fprintf(stderr, "Posicao %d tem: %s do tipo: %d\n",
+                    i, node->text, node->type);
+        }
+    }
 }
