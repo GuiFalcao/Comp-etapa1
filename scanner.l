@@ -65,9 +65,22 @@ void initMe();
 <comentario>.									{}
 %%
 
+void initMe(void)
+{
+	running = 1;
+	lineNumber = 1;
+	hashInit();
+}
+
 int getLineNumber(void)
 {
 	return lineNumber;
+}
+
+int yywrap(void)
+{
+	running = 0;
+	return 1;
 }
 
 int isRunning(void)
