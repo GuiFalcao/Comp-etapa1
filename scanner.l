@@ -17,8 +17,10 @@ int isRunning();
 void initMe();
 %}
 
-%%
+%x comentario
 
+%%
+/* Palavras Reservadas */
 "char"										{return KW_CHAR;}
 "int" 									  {return KW_INT ;}
 "float" 									{return KW_FLOAT;}
@@ -31,8 +33,10 @@ void initMe();
 "print" 									{return KW_PRINT;}
 "return" 									{return KW_RETURN;}
 
+/* Caracteres Especiais */
 [\,\;\:\(\)\[\]\{\}\+\-\*\/\<\>\=\!\&\$\#]	{return yytext[0];}
 
+/* Operadores Compostos */
 "<=" 										{return OPERATOR_LE;}
 ">=" 										{return OPERATOR_GE;}
 "==" 										{return OPERATOR_EQ;}
@@ -40,17 +44,25 @@ void initMe();
 "&&" 										{return OPERATOR_AND;}
 "||" 										{return OPERATOR_OR;}
 
+/* Identificadores */
 [a-zA-Z_][a-zA-Z_0-9]* 		{hashInsert(TK_IDENTIFIER, yytext); return TK_IDENTIFIER;}
+
+/* Literais */
 [0-9]+ 										{hashInsert(LIT_INTEGER, yytext); return LIT_INTEGER;}
 [0-9]+\.[0-9]+ 								{hashInsert(LIT_REAL, yytext); return LIT_REAL;}
+'([^'\\\n]?|\\.)'							{hashInsert(LIT_CHAR, yytext); return LIT_CHAR;}
+\"([^\"\\\n]|\\.)*\"						{hashInsert(LIT_STRING, yytext); return LIT_STRING;}
 
 [ \t]										{}
 "\n" 										{lineNumber++;}
 "//".*
-"/*" 										{BEGIN(COMMENT);}
+"/*" 										{BEGIN(comentario);}
 
 . 											{return TOKEN_ERROR;}
 
+<comentario>"\n" 								{lineNumber++;}
+<comentario>"*/" 								{BEGIN(INITIAL);}
+<comentario>.									{}
 %%
 
 int getLineNumber(void)
